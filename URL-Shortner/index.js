@@ -1,8 +1,12 @@
 import express from "express"
-import urlRoute from "./routes/urlRoute.js"
 import connectDb from "./config/db.js";
 import URL from "./models/url.js"
 import path from "path"
+import cookieParser from "cookie-parser";
+import { checkAuth, restrictToLoggedInUser } from "./middlewares/auth.js";
+
+import urlRoute from "./routes/urlRoute.js"
+import userRoute from "./routes/userRoute.js"
 import staticRoute from "./routes/staticRoute.js"
 
 const app = express();
@@ -16,35 +20,40 @@ app.set("views", path.resolve("./views"))
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser())
 
-app.use('/', staticRoute)
+app.use('/url', restrictToLoggedInUser, urlRoute)
+app.use('/user', userRoute)
+app.use('/',checkAuth, staticRoute)
 
-app.get("/test", async (req, res) => {
-  const allUrls = await URL.find({});
 
-  res.render(
-    "home",
-    {
-      urls : allUrls
-    }
-  )
+// app.get("/test", async (req, res) => {
+//   const allUrls = await URL.find({});
 
-  // return res.end(`
-  //   <html>
-  //     <head></head>
-  //       <body>
-  //         <ol>
-  //           ${allUrls.map((url, index) => `
-  //             <li>
-  //               ${url.shortId} - ${url.redirectURL} - ${url.visitHistory.length}
-  //             </li>`).join('')}
-  //         </ol>
-  //       </body>
-  //   </html>`
-  // )
-})
+//   res.render(
+//     "home",
+//     {
+//       urls : allUrls
+//     }
+//   )
 
-app.use("/url", urlRoute)
+//   // return res.end(`
+//   //   <html>
+//   //     <head></head>
+//   //       <body>
+//   //         <ol>
+//   //           ${allUrls.map((url, index) => `
+//   //             <li>
+//   //               ${url.shortId} - ${url.redirectURL} - ${url.visitHistory.length}
+//   //             </li>`).join('')}
+//   //         </ol>
+//   //       </body>
+//   //   </html>`
+//   // )
+// })
+
+// app.use("/url", urlRoute)
+
 app.get("/url/:shortId", async (req, res) => {
   const shortId = req.params.shortId;
 

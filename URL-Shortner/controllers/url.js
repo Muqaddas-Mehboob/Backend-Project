@@ -17,9 +17,14 @@ export async function generateNewShortURL(req, res) {
       visitHistory: [],
     });
 
+    // return res.render('home', {
+    //   id : shortID,
+    // })
+    const allUrls = await URL.find({});
     return res.render('home', {
-      id : shortID,
-    })
+    id: shortID,
+    urls: allUrls,
+})
     // return res.json({ id : shortID });
     
   } catch (error) {

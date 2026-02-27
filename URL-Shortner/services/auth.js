@@ -1,9 +1,33 @@
-const sessionIdToUserMap = new Map();
+import jwt from "jsonwebtoken";
+const secret = "Muqaddas"
 
-export function setUser(id, user){
-    sessionIdToUserMap.set(id, user)
+// const sessionIdToUserMap = new Map();
+
+// export function setUser(id, user){
+//     //--> STATEFUL AUTH
+//     // sessionIdToUserMap.set(id, user) 
+
+// }
+
+export function setUser(user){
+    // --> STATELESS AUTH (generate tokens)
+    return jwt.sign({
+        _id : user._id,
+        name : user.name
+        // email: user.email
+    }, secret)
 }
 
-export function getUser(id){
-    sessionIdToUserMap.get(id)
+// export function getUser(id){
+//     //--> STATEFUL AUTH
+//     return sessionIdToUserMap.get(id)
+// }
+
+export function getUser(token){
+    if(!token) return null
+    try {
+        return jwt.verify(token, secret)
+    } catch(err) {
+        return null  
+    }
 }

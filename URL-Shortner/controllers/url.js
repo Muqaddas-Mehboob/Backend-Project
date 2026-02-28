@@ -15,12 +15,13 @@ export async function generateNewShortURL(req, res) {
       shortId : shortID,
       redirectURL: url,
       visitHistory: [],
+      createdBy: req.user._id
     });
 
     // return res.render('home', {
     //   id : shortID,
     // })
-    const allUrls = await URL.find({});
+    const allUrls = await URL.find({createdBy : req.user._id});
     return res.render('home', {
     id: shortID,
     urls: allUrls,

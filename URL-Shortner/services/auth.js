@@ -13,8 +13,9 @@ export function setUser(user){
     // --> STATELESS AUTH (generate tokens)
     return jwt.sign({
         _id : user._id,
-        name : user.name
-        // email: user.email
+        name : user.name,
+        email: user.email,
+        role : user.role,
     }, secret)
 }
 

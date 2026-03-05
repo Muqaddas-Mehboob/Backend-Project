@@ -15,7 +15,8 @@ export async function generateNewShortURL(req, res) {
       shortId : shortID,
       redirectURL: url,
       visitHistory: [],
-      createdBy: req.user._id
+      createdBy: req.user._id,
+      role : req.user.role,
     });
 
     // return res.render('home', {

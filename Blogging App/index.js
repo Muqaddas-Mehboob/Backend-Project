@@ -3,6 +3,8 @@ import dotenv from 'dotenv'
 import path from 'path'
 import connectDb from './config/db.js';
 import userRouter from './routes/userRouter.js'
+import cookieParser from 'cookie-parser';
+import { checkForAuthCookies } from './middlewares/auth.js';
 
 dotenv.config()
 
@@ -24,9 +26,11 @@ This converts the form data into a JavaScript object. */
 app.use(express.urlencoded({extended : false}))
 
 app.use('/user', userRouter)
+app.use(cookieParser())
+app.use(checkForAuthCookies('token'))
 
 app.get('/', (req, res) => {
-    res.render('home')
+    res.render('home', { user : req.user})
 })
 
 app.listen(PORT, () => {

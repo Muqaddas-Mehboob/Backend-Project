@@ -12,10 +12,22 @@ router.get('/signup', (req, res) => {
 })
 
 router.post('/signin', async (req, res) => {
-    const {email, password} = req.body
-    const isMatched = await User.matchPassword(email, password)
+    const { email, password } = req.body
 
-    return res.redirect('/')
+    try {
+        const token = await User.matchPasswordAndGenerateToken(email, password)
+
+        /* `return res.cookie('token', token).redirect('/')` is a part of the code that handles the POST
+        request to sign in a user. Here's what it does: the server can read this cookie to know which 
+        user is logged in. */
+        return res.cookie('token', token).redirect('/')
+
+    } catch (error) {
+        return res.render('signin', {
+            error : "Incorrect Username or Password"
+        })
+    }
+
 })
 
 router.post('/signup', async (req, res) => {
@@ -23,11 +35,15 @@ router.post('/signup', async (req, res) => {
 
     await User.create({
         fullName,
-        email, 
+        email,
         password
     })
 
     return res.redirect('/')
+})
+
+router.get('/logout', (req, res) => {
+    res.clearCookie('token').redirect("/")
 })
 
 export default router
